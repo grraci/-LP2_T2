@@ -1,7 +1,5 @@
 -LP2_T2
 =======
-package tester;
-
 import java.util.Scanner;
 
 public class TravessiaDeserto {
