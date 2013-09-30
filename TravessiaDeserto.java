@@ -1,106 +1,85 @@
 -LP2_T2
 =======
-import java.util.Scanner;
-
-public class TravessiaDeserto {
-
-
-		private int posicao;
-		private int fuel;
-		private int[] mapa;
-
-	    private Scanner sc = new Scanner(System.in);
-
-	  public static final int MAX_FUEL = 6;
+/**
+* Classe do jogo TravessiaDeserto feita por Rafael jeffman
+* 
+* made by Graciela Robert
+*
+* @version X
+*/
+	import java.util.Scanner;
+	
+	public class TravessiaDeserto {
 		public static final int MAP_SIZE = 10;
-		public static final int ERRO = -1;
-		public static final int AJUDA = 0;
-		public static final int CARREGAR = 1;
-		public static final int DESCARREGAR = 2;
-		public static final int VOLTAR = 3;
-		public static final int AVANCAR = 4;
-
-		public static void main(String[] args)
-		{
-			(new TravessiaDeserto()).run(args);
-	    }
-
-		public void run(String[] args)
-		{
-			inicializaJogo();
-			do{
+		public static final int MAX_FUEL = 6;
+		public static final
+			java.util.Scanner sc = new java.util.Scanner(System.in);
+		
+		public static final int AVANCAR = 0;
+		public static final int VOLTAR = 1;
+		public static final int CARREGAR = 2;
+		public static final int DESCARREGAR = 3;
+		public static final int AJUDA = 4;
+		public static final int ERROR = -1;
+		
+		private int[] map;
+		private int fuel;
+		private int pos;
+		public static void main(String[] args) {
+			(new TravessiaDeserto()).run();
+		}
+		public void run() {
+			initGame();
+			do {
 				printStatus();
-				printPrompt();
-				int cmd = getCommand( sc.next() );
-				processCommand(cmd);
-	        } while (!isGameOver());
-
+				int cmd = translateCommand( sc.next() );
+				processCommand( cmd );
+			} while (!isGameOver());
+			
 			System.out.println(getEndMessage());
 		}
-
+		
 		public int getPosicao(){
-	        
-
-	        return posicao;
+			return pos;
+		}
+		public int getFuel(){
+			return fuel;
+		}
+		public int getMap(){
+			return map[MAP_SIZE];
 		}
 		
-public int getFuel(){
-	        
-
-	        return fuel;
-		}
-public int getMapa(){
-    
-
-    return mapa[MAP_SIZE];
-}
-	   
-		public String getEndMessage()
-		{
-	        if (isWinner())
-	            return "Voce GANHOU!";
+		
+		public String getEndMessage() {
+			if (isWinner())
+				return "Voce GANHOU!";
 			else
-	            return "Voce perdeu.";
+				return "Voce PERDEU.";
 		}
-
-		public boolean isGameOver()
-		{
-	        if (isWinner())
-	            return true;
-			if (fuel == 0 && mapa[posicao] == 0)
-	            return true;
+		public boolean isGameOver() {
+			if (isWinner())
+				return true;
+			if (fuel == 0 && map[pos] == 0)
+				return true;
 			return false;
 		}
-
-		public boolean isWinner()
-		{
-			return posicao == mapa.length;
+		public boolean isWinner() {
+			return pos == MAP_SIZE;
 		}
-
-		public void inicializaJogo()
-		{
+		public void initGame() {
+			pos = 0;
 			fuel = MAX_FUEL;
-			posicao = 0;
-			mapa = new int[MAP_SIZE];
+			map = new int[MAP_SIZE];
 		}
-
-		public void printStatus()
-		{
-	        System.out.println(String.format("Voce está na posição %d.", posicao));
-			System.out.println(String.format("Você tem %d unidades de combustível.",fuel));
-			if (posicao > 0)
-	            System.out.println(String.format("Nesta posicao existem %d unidades de combustivel.",fuel));
+		
+		public void printStatus() {
+			System.out.println(String.format("Voce esta na posicao %d.", pos));
+			System.out.println(String.format("Voce possui %d unidades de combustivel.",fuel));
+			if (pos > 0)
+				System.out.println(String.format("Existem %d unidades de combustivel nessa posicao.", map[pos]));
 		}
-
-	    public void printPrompt()
-	    {
-			System.out.print("Comando ('help' para ajuda): ");
-		}
-
-		public int getCommand(String command)
-		{
-	        String cmd = command.toLowerCase();
-
+		public int translateCommand(String command) {
+			String cmd = command.toLowerCase();
 			if (cmd.equals("avancar"))
 				return AVANCAR;
 			if (cmd.equals("voltar"))
@@ -109,22 +88,17 @@ public int getMapa(){
 				return CARREGAR;
 			if (cmd.equals("descarregar"))
 				return DESCARREGAR;
-			if (cmd.equals("help"))
+			if (cmd.equals("ajuda"))
 				return AJUDA;
-
-	        return ERRO;
+			return ERROR;
 		}
-
-		public void processCommand(int cmd) {
-			switch (cmd) {
-				case AJUDA:
-					ajuda();
+		public void processCommand(int command) {
+			switch (command) {
+				case AVANCAR:
+					avancar();
 					break;
 				case VOLTAR:
 					voltar();
-					break;
-				case AVANCAR:
-					avancar();
 					break;
 				case CARREGAR:
 					carregar();
@@ -132,56 +106,40 @@ public int getMapa(){
 				case DESCARREGAR:
 					descarregar();
 					break;
+				case AJUDA:
+					ajuda();
+					break;
 				default:
-					System.out.print("Comando Invalido");
+					System.err.println("Comando invalido.");
 			}
 		}
-
-		public void ajuda()
-		{
-	        System.out.println("avancar voltar carregar descarregar ajuda");
+		public void ajuda() {
+			System.out.println("Comandos: avancar voltar carregar descarregar ajuda");
 		}
-
-		public void avancar()
-		{
-			if (fuel > 0 ) {
+		public void descarregar() {
+			if (fuel > 0) {
 				fuel--;
-				posicao++;
-	        }
-		}
-
-		public void voltar()
-		{
-			if (fuel > 0 && posicao > 0) {
-	            fuel--;
-				posicao--;
-	        }
-
-			if (posicao == 0) {
-				fuel = MAX_FUEL;
+				map[pos]++;
 			}
-	    }
-
-	    public void carregar()
-	    {
-			if (fuel < MAX_FUEL && mapa[posicao] > 0 ) {
-				mapa[posicao]--;
+		}
+		public void carregar() {
+			if (map[pos] > 0) {
+				map[pos]--;
 				fuel++;
-	        }
+			}
 		}
-
-		public void descarregar()
-		{
-			if (fuel> 0) {
-				mapa[posicao]++;
+		public void voltar() {
+			if (fuel > 0 && pos > 0) {
 				fuel--;
-	        }
-		
-			
-
-			
-			
+				pos--;
+			}
+			if (pos == 0)
+				fuel = MAX_FUEL;
+		}
+		public void avancar() {
+			if (fuel > 0) {
+				fuel--;
+				pos++;
+			}
+		}
 	}
-	
-	
-}
